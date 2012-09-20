@@ -1,0 +1,39 @@
+%form(action="" method="post")
+  %fieldset
+    %dl
+      %dt
+        %label Card Name
+      %dd
+        %input(type="text" name="name" value="Maze of Ith")
+      %dt
+        %label Color
+      %dd
+        %input(type="text" name="color")
+      %dt
+        %label Mana Cost
+      %dd
+        %input(type="text" name="cost" value="3UR")
+      %dt
+        %label Card Type
+      %dd
+        %input(type="text" name="type" value="Land")
+      %dt
+        %label Card Text
+      %dd
+        %textarea(rows="6" cols="60" name="text")
+          {T}: Untap target attacking creature. Prevent all combat damage that would be dealt to and dealt by that creature this turn.
+      %dt
+        %label Power/Toughness
+      %dd
+        %input(type="text" name="p_t")
+  %fieldset
+    %input(type="submit" value="Preloading assets..." disabled)
+
+%canvas(width="797" height="1114")
+%img(src="images/maze_of_ith.png")
+%script
+  :plain
+    $("canvas").data("frames", {
+      lands: #{Dir.glob("source/frames/lands/*.png")},
+      mask: #{Dir.glob("source/frames/mask/*.png")}
+    });
