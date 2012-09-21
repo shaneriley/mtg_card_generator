@@ -32,11 +32,21 @@ $(function() {
       ctx.globalCompositeOperation = "destination-out";
       ctx.drawImage(frames.mask.corners[0], 0, 0);
       ctx.restore();
-      frames.drawTitle();
-      frames.drawText();
-      frames.drawCastingCost();
       $(ctx.canvas).show();
     },
+    ready: function(cb) {
+      cb && frames.callbacks.push(cb);
+      if (frames.loaded) {
+        $.each(frames.callbacks, function(i, fn) {
+          fn();
+        });
+        frames.callbacks = [];
+      }
+      else { setTimeout(frames.ready, 30); }
+    }
+  };
+
+  var copy = {
     drawTitle: function() {
       ctx.save();
       ctx.font = "bold 48px Matrix";
@@ -60,8 +70,8 @@ $(function() {
       ctx.fillStyle = "#ffffff";
       ctx.fillText(frames.data.type, 80, 710);
       ctx.font = "normal 36px Plantin";
-      lines = frames.splitLines(frames.data.text, 640);
-      frames.writeLines(lines, 80, 760);
+      lines = copy.splitLines(frames.data.text, 640);
+      copy.writeLines(lines, 80, 760);
       ctx.restore();
     },
     drawCastingCost: function() {
@@ -111,15 +121,10 @@ $(function() {
       });
       return lines;
     },
-    ready: function(cb) {
-      cb && frames.callbacks.push(cb);
-      if (frames.loaded) {
-        $.each(frames.callbacks, function(i, fn) {
-          fn();
-        });
-        frames.callbacks = [];
+    draw: function() {
+      for (var method in this) {
+        if (/^draw.+/.test(method)) { this[method](); }
       }
-      else { setTimeout(frames.ready, 30); }
     }
   };
 
@@ -141,5 +146,6 @@ $(function() {
     frames.data.color = frames.data.color ? frames.data.color.split(" ") : ["colorless"];
     if (frames.data.color.length > 2) { frames.data.color = "multi"; }
     frames.draw($("img"), { type: "lands", color: frames.data.color });
+    copy.draw();
   });
 });
